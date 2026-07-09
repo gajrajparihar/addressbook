@@ -25,7 +25,7 @@ pipeline {
                     bat '''
                         aws s3 cp ^
                         target\\addressbook-2.1.war ^
-                        s3://gajraj-test/test/addressbook.war/                
+                        s3://gajraj-test/addressbook/                
                     '''
                 }
             }
