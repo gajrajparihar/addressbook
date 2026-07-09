@@ -5,7 +5,6 @@ pipeline {
         jdk 'jdk8'
         maven 'maven-3.9'
     }
-    }
     stages {
         stage('Checkout') {
             steps {
