@@ -28,11 +28,11 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+        aws-region: ${{ vars.AWS_REGION }}
 
     - name: Upload WAR to S3
       run: aws s3 cp target/addressbook-2.1.war \
-          s3://${{ env.S3_BUCKET_WAR }}/addressbook/addressbook-${{ github.run_number }}.war
+          s3://${{ vars.S3_BUCKET_WAR }}/addressbook/addressbook-${{ github.run_number }}.war
 
     - name: Show uploaded files
-      run: aws s3 ls s3://${{  env.S3_BUCKET_WAR }}/addressbook/
+      run: aws s3 ls s3://${{  vars.S3_BUCKET_WAR }}/addressbook/
