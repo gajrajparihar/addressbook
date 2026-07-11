@@ -5,7 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+env:
+  app_version: 2026.1.0
 jobs:
   build_upload_war:
     environment: Dev
@@ -31,7 +32,7 @@ jobs:
         aws-region: ${{ vars.AWS_REGION }}
 
     - name: Upload WAR to S3
-      run: aws s3 cp target/addressbook-2.1.war s3://${{ vars.S3_BUCKET_WAR }}/addressbook/addressbook-${{ github.run_number }}.war
+      run: aws s3 cp target/addressbook-2.1.war s3://${{ vars.S3_BUCKET_WAR }}/addressbook/addressbook-${{ env.app_version }}.war
 
     - name: Show uploaded files
       run: aws s3 ls s3://${{  vars.S3_BUCKET_WAR }}/addressbook/
