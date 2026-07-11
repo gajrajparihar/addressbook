@@ -1,4 +1,4 @@
-name: CI Using Github Action
+name: Build and upload WAR to S3
 
 on:
   push:
@@ -30,10 +30,8 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Upload WAR to S3
-      run: |
-        aws s3 cp target/addressbook-2.1.war \
+      run: aws s3 cp target/addressbook-2.1.war \
           s3://${{ env.S3_BUCKET_WAR }}/addressbook/addressbook-${{ github.run_number }}.war
 
     - name: Show uploaded files
-        run: |
-          aws s3 ls s3://${{ env.S3_BUCKET_WAR }}/addressbook/
+        run: aws s3 ls s3://${{ env.S3_BUCKET_WAR }}/addressbook/
