@@ -34,6 +34,13 @@ jobs:
           . .venv/bin/activate
           ansible-galaxy collection install amazon.aws
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
       - name: Configure SSH Key
         run: |
           mkdir -p ~/.ssh
@@ -49,7 +56,6 @@ jobs:
       - name: Execute Ansible Playbook
         working-directory: ansible-project/ansible
         env:
-          AWS_REGION: ${{ vars.AWS_REGION }}
           S3_BUCKET_WAR: ${{ vars.S3_BUCKET_WAR }}
           APP_VERSION: ${{ vars.APP_VERSION }}
         run: |
@@ -58,4 +64,4 @@ jobs:
             playbooks/tomcat_install.yml \
             playbooks/deploy_war.yml \
             --private-key ~/.ssh/id_rsa \
-            --extra-vars "aws_region=$AWS_REGION s3_bucket=$S3_BUCKET_WAR app_version=$APP_VERSION"
+            --extra-vars "s3_bucket=$S3_BUCKET_WAR app_version=$APP_VERSION"
