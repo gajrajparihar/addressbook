@@ -37,7 +37,12 @@ jobs:
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
           EOF
-
+      - name: Test SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+              -i ~/.ssh/id_rsa \
+              ec2-user@54.93.81.199 "hostname"
+              
       - name: Execute Ansible Playbook
         working-directory: ansible-project
         env:
