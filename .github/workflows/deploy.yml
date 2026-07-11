@@ -26,6 +26,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ansible
 
+      - name: Install boto3 and botocore
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install boto3 botocore
+
+      - name: Install Ansible Collections
+        run: |
+          ansible-galaxy collection install amazon.aws
+
       - name: Configure SSH Key
         run: |
           mkdir -p ~/.ssh
