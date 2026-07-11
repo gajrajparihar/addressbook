@@ -17,22 +17,21 @@ jobs:
       - name: Checkout Ansible Repository
         uses: actions/checkout@v4
         with:
-          repository: gajrajparihar/ansible-project      # Change if different
+          repository: gajrajparihar/ansible-project     
           path: ansible-project
           token: ${{ secrets.ANSIBLE_REPO_TOKEN }}
 
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
-
-      - name: Install boto3 and botocore
+      - name: Set up Python virtualenv for Ansible
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install boto3 botocore
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install ansible boto3 botocore
 
       - name: Install Ansible Collections
         run: |
+          . .venv/bin/activate
           ansible-galaxy collection install amazon.aws
 
       - name: Configure SSH Key
@@ -54,6 +53,7 @@ jobs:
           S3_BUCKET_WAR: ${{ vars.S3_BUCKET_WAR }}
           APP_VERSION: ${{ vars.APP_VERSION }}
         run: |
+            . ../../.venv/bin/activate
             ansible-playbook -l app \
             playbooks/tomcat_install.yml \
             playbooks/deploy_war.yml \
