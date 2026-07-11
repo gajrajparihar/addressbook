@@ -37,24 +37,14 @@ jobs:
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
           EOF
-          
-      - name: Test SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no \
-              -i ~/.ssh/id_rsa \
-              ec2-user@54.93.81.199 "hostname"
-              
-      - name: Execute Ansible Playbook
-        working-directory: ansible-project
+
+        working-directory: ansible-project/ansible
         env:
           AWS_REGION: ${{ vars.AWS_REGION }}
           S3_BUCKET_WAR: ${{ vars.S3_BUCKET_WAR }}
           APP_VERSION: ${{ vars.APP_VERSION }}
         run: |
-          cd ansible
-          pwd
-          cat ~/.ssh/id_rsa
-          ansible-playbook -l app \
+            ansible-playbook -l app \
             playbooks/tomcat_install.yml \
             playbooks/deploy_war.yml \
             --private-key ~/.ssh/id_rsa \
