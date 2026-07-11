@@ -61,7 +61,8 @@ jobs:
         run: |
             . ../../.venv/bin/activate
             ansible-playbook -l app \
-            playbooks/tomcat_install.yml \
             playbooks/deploy_war.yml \
             --private-key ~/.ssh/id_rsa \
             --extra-vars "s3_bucket=$S3_BUCKET_WAR app_version=$APP_VERSION"
+
+            
