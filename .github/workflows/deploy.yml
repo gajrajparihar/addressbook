@@ -46,6 +46,6 @@ jobs:
           APP_VERSION: ${{ vars.APP_VERSION }}
         run: |
           ansible-playbook \
-            playbooks/tomcat_install.yml \
-            playbooks/deploy_war.yml \
+            ansible/playbooks/tomcat_install.yml \
+            ansible/playbooks/deploy_war.yml \
             --extra-vars "aws_region=$AWS_REGION s3_bucket=$S3_BUCKET_WAR app_version=$APP_VERSION"
