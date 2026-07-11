@@ -34,4 +34,4 @@ jobs:
           s3://${{ env.S3_BUCKET_WAR }}/addressbook/addressbook-${{ github.run_number }}.war
 
     - name: Show uploaded files
-        run: aws s3 ls s3://${{ env.S3_BUCKET_WAR }}/addressbook/
+      run: aws s3 ls s3://${{ env.S3_BUCKET_WAR }}/addressbook/
