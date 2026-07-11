@@ -1,0 +1,51 @@
+name: Deploy AddressBook
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    environment: Dev
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout AddressBook Repository
+        uses: actions/checkout@v4
+
+      - name: Checkout Ansible Repository
+        uses: actions/checkout@v4
+        with:
+          repository: gajrajparihar/ansible-project      # Change if different
+          path: ansible-project
+          token: ${{ secrets.ANSIBLE_REPO_TOKEN }}
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Configure SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_KEY_TERRAFORM_ANSIBLE_PEM }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          cat <<EOF >> ~/.ssh/config
+          Host *
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+          EOF
+
+      - name: Execute Ansible Playbook
+        working-directory: ansible-project
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          S3_BUCKET_WAR: ${{ vars.S3_BUCKET_WAR }}
+          APP_VERSION: ${{ vars.APP_VERSION }}
+        run: |
+          ansible-playbook \
+            playbooks/tomcat_install.yml \
+            playbooks/deploy_war.yml \
+            --extra-vars "aws_region=$AWS_REGION s3_bucket=$S3_BUCKET_WAR app_version=$APP_VERSION"
