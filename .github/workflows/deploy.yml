@@ -38,6 +38,7 @@ jobs:
             UserKnownHostsFile /dev/null
           EOF
 
+      - name: Execute Ansible Playbook
         working-directory: ansible-project/ansible
         env:
           AWS_REGION: ${{ vars.AWS_REGION }}
