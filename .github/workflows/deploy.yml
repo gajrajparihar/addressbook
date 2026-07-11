@@ -46,7 +46,10 @@ jobs:
           APP_VERSION: ${{ vars.APP_VERSION }}
         run: |
           cd ansible
+          pwd
+          cat ~/.ssh/id_rsa
           ansible-playbook -l app \
             playbooks/tomcat_install.yml \
             playbooks/deploy_war.yml \
+            --private-key ~/.ssh/id_rsa \
             --extra-vars "aws_region=$AWS_REGION s3_bucket=$S3_BUCKET_WAR app_version=$APP_VERSION"
