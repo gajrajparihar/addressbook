@@ -5,10 +5,10 @@ on:
 
 env:
   ECR_REPOSITORY: addressbook
-  ECS_SERVICE: ${{ vars.ECS_SERVICE }}
-  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
-  ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
-  CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+  ECS_SERVICE: addressbook-service
+  ECS_CLUSTER: addressbook-cluster
+  ECS_TASK_DEFINITION: addressbook
+  CONTAINER_NAME: addressbook
 
 permissions:
   contents: read
