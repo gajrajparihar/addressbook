@@ -54,3 +54,22 @@ jobs:
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
         echo "image_latest=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
 
+    - name: Remove untagged images from ECR
+      run: |
+        UNTAGGED_DIGESTS=$(aws ecr list-images \
+          --repository-name "$ECR_REPOSITORY" \
+          --filter tagStatus=UNTAGGED \
+          --query 'imageIds[*].imageDigest' \
+          --output text)
+
+        if [ -z "$UNTAGGED_DIGESTS" ] || [ "$UNTAGGED_DIGESTS" = "None" ]; then
+          echo "No untagged images found in $ECR_REPOSITORY"
+          exit 0
+        fi
+
+        for digest in $UNTAGGED_DIGESTS; do
+          aws ecr batch-delete-image \
+            --repository-name "$ECR_REPOSITORY" \
+            --image-ids imageDigest="$digest"
+        done
+
