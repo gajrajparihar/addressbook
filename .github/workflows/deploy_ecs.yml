@@ -44,13 +44,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Validate ECS inputs
-      run: |
-        test -n "$ECS_SERVICE" || (echo "ECS_SERVICE is empty"; exit 1)
-        test -n "$ECS_CLUSTER" || (echo "ECS_CLUSTER is empty"; exit 1)
-        test -n "$ECS_TASK_DEFINITION" || (echo "ECS_TASK_DEFINITION is empty"; exit 1)
-        test -n "$CONTAINER_NAME" || (echo "CONTAINER_NAME is empty"; exit 1)
-
     - name: Download task definition JSON
       run: |
         aws ecs describe-task-definition \
