@@ -44,11 +44,24 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
+    - name: Validate ECS inputs
+      run: |
+        test -n "$ECS_SERVICE" || (echo "ECS_SERVICE is empty"; exit 1)
+        test -n "$ECS_CLUSTER" || (echo "ECS_CLUSTER is empty"; exit 1)
+        test -n "$ECS_TASK_DEFINITION" || (echo "ECS_TASK_DEFINITION is empty"; exit 1)
+        test -n "$CONTAINER_NAME" || (echo "CONTAINER_NAME is empty"; exit 1)
+
+    - name: Download task definition JSON
+      run: |
+        aws ecs describe-task-definition \
+          --task-definition "$ECS_TASK_DEFINITION" \
+          --query taskDefinition > task-definition.json
+
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        task-definition: task-definition.json
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.release.outputs.app_version }}
 
