@@ -1,4 +1,4 @@
-name: Deploy AddressBook
+name: Deploy to EC2 using Ansible
 
 on:
   workflow_dispatch:
