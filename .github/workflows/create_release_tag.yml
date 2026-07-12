@@ -1,0 +1,51 @@
+name: Create ECR Release Tag
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECR_REPOSITORY: addressbook
+
+permissions:
+  contents: read
+
+jobs:
+  tag_release:
+    name: Tag latest image as release
+    runs-on: ubuntu-latest
+    environment: Dev
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Read release version
+      id: release
+      run: |
+        APP_VERSION=$(grep -E '^APP_VERSION=' release.env | head -n1 | cut -d '=' -f2-)
+        if [ -z "$APP_VERSION" ]; then
+          echo "APP_VERSION is missing in release.env"
+          exit 1
+        fi
+        echo "app_version=$APP_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Pull latest, tag as release, and push
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        APP_VERSION: ${{ steps.release.outputs.app_version }}
+      run: |
+        docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$APP_VERSION
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$APP_VERSION
